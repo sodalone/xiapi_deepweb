@@ -1,0 +1,9 @@
+itemid-shopid-catid: 标识符 主键 text
+similar-flag: 是否进行相似爬取 0/1 int
+name: 商品名 text
+price: 价格 text
+price_before_discount: 打折之前的价格 text
+discount: 折扣 float
+rating_star: 评价 float
+historical_sold: 销量 int
+comment_count: 评论数 int
