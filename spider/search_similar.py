@@ -13,6 +13,7 @@ from pathlib import Path
 import pandas as pd
 import csv
 from util import *
+from time import sleep
 
 class SearchSimilar(feapder.AirSpider):
 
@@ -86,7 +87,7 @@ class SearchSimilar(feapder.AirSpider):
             print(f'{request.index}--->{data_count}')
 
             params = self.get_params(request.item_shop_cat_id, request.index+1)
-            yield feapder.Request(request.url, params=params, headers=get_xiapi_match(params), index=request.index+1, item_shop_cat_id=request.item_shop_cat_id)
+            #yield feapder.Request(request.url, params=params, headers=get_xiapi_match(params), index=request.index+1, item_shop_cat_id=request.item_shop_cat_id)
 
     def __del__(self):
         self.csv_writer.writerows(self.write_datas)
@@ -101,4 +102,5 @@ class SearchSimilar(feapder.AirSpider):
 if __name__ == "__main__":
     iterator_count = eval(input('iterator_count: '))
     key_word = '菜刀'
-    SearchSimilar(key_word=key_word, iterator_count=iterator_count, thread_count=50).start()
+    SearchSimilar(key_word=key_word, iterator_count=iterator_count, thread_count=10).start()
+    sleep(30)

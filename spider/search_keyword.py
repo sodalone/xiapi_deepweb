@@ -27,14 +27,13 @@ class SearchKeyword(feapder.AirSpider):
         self.f = open(self.now_file, 'a+', encoding='utf-8_sig', newline='')
         self.csv_writer = csv.writer(self.f)
         self.find_goods = []
-    
 
     def get_params(self, i):
         return {
             'by': 'relevancy',
             'keyword': self.key_word,
             'limit': f'{self.page_count}',
-            'newest': f'{i*self.page_count}',
+            'newest': f'{i * self.page_count}',
             'order': 'desc',
             'page_type': 'search',
             'scenario': 'PAGE_GLOBAL_SEARCH',
@@ -60,11 +59,10 @@ class SearchKeyword(feapder.AirSpider):
                     data_count += 1
             print(f'{request.index}--->{data_count}')
             self.f.flush()
-            
-            params = self.get_params(request.index+1)
-            yield feapder.Request(request.url, params=params, headers=get_xiapi_match(params), index=request.index+1)
 
-    
+            params = self.get_params(request.index + 1)
+            # yield feapder.Request(request.url, params=params, headers=get_xiapi_match(params), index=request.index+1)
+
     def __del__(self):
         self.f.close()
         print(f'>>> 通过搜索，一共找到{len(self.find_goods)}件商品')
@@ -72,4 +70,10 @@ class SearchKeyword(feapder.AirSpider):
 
 if __name__ == "__main__":
     key_word = '菜刀'
-    SearchKeyword(key_word=key_word, thread_count=1).start()
+    demo = SearchKeyword(key_word=key_word, thread_count=1)
+    demo.start()
+    # from time import sleep
+    # sleep(8)
+    #print(f'>>> 通过搜索，一共找到{len(demo.find_goods)}件商品')
+
+
