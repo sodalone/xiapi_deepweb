@@ -9,7 +9,6 @@ class Database:
         self.password = password
         self.database = database
 
-
         self.db, self.cursor = self.connect()
 
     def connect(self):
@@ -26,46 +25,49 @@ class Database:
         self.cursor.close()
         self.db.close()
 
-    # def check(self): # 改成一个table的初始化函数，因为表的生成是最后的一步，所以存在表，就清空，不存在就创建表
+    #table的初始化函数,存在表，就清空
     def table_init(self):
         sql = 'show tables'
         self.cursor.execute(sql)
         result = self.cursor.fetchall()
         result = str(result)
-        if result.find(self.table) >= 0:
-            print('Table %s already exists.' %self.table)
+        if result.find(self.table_name) >= 0:
+            clear_table = 'truncate table %s' %self.table_name
+            self.cursor.execute(clear_table) #清空表，但表的结构还在
+            print('Table %s already exists. Delete the old and create a new table.' %self.table_name)
             return True
         else:
             return False
 
     def create_table(self):
-        # if self.check():
-        #     return
+        exist = self.table_init()
+        if not exist:
+            sql = f"""
+                create table {self.table_name}(itemid_shopid_catid varchar(50) not null primary key,
+                similiar_flag int,
+                name varchar(200), 
+                price varchar(50),
+                price_before_discount varchar(50),
+                discount float,
+                rating_star float,
+                historical_sold int,
+                comment_count int)ENGINE=innodb DEFAULT CHARSET=utf8;
+            """     # 可以用字段name可以用text吗？（疑问句）
+            self.cursor.execute(sql)
 
-        # 每次开始时，先连接数据库 我也不知道是在init里面self比较好，还是每次函数开始都连接数据库比较好，你看着办
-        # db, cursor = self.connect()
-
-
-        self.table_init()
-
-        sql = f"""
-            create table {self.table_name}(itemid_shopid_catid varchar(50) not null primary key,
-            similiar_flag int,
-            name varchar(200), 
-            price varchar(50),
-            price_before_discount varchar(50),
-            discount float,
-            rating_star float,
-            historical_sold int,
-            comment_count int)ENGINE=innodb DEFAULT CHARSET=utf8;
-        """     ### 可以用字段name可以用text吗？（疑问句）
-        self.cursor.execute(sql)
-        self.close() # 创建完就关闭
+    def query(self):
+        query_data = 'select * from %s' %self.table_name
+        self.cursor.execute(query_data)
+        result = self.cursor.fetchall()
+        result = str(result[0])
+        print(result)
 
 def main():
-    knife = Database('localhost', 'root', 'root', 'test', 'knife')
+    knife = Database('knife', 'localhost', 'root', 'root', 'test')
     knife.connect()
     knife.create_table()
+    knife.query()
+    knife.close() #所有操作进行完毕后必须执行close
 
 if __name__ == '__main__':
     main()
